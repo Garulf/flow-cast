@@ -26,7 +26,7 @@ def hint() -> Result:
         title="Paste a URL to cast",
         subtitle="YouTube links, media files, or any page yt-dlp supports",
         icon=ICON,
-    )
+    ).add_action(keep_open)
 
 
 def clipboard_result() -> Result:
@@ -59,7 +59,7 @@ async def query(query: str):
             title="No Chromecasts found",
             subtitle="Make sure this PC and the Chromecast are on the same network",
             icon=ICON,
-        )
+        ).add_action(keep_open)
         return
     for index, device in enumerate(found):
         yield Result(
@@ -68,6 +68,12 @@ async def query(query: str):
             icon=CAST_ICON,
             score=len(found) - index,
         ).add_action(cast, [str(device.uuid), text])
+
+
+@plugin.on_method
+async def keep_open():
+    """Flow Launcher 2.1.4 crashes when a python_v2 result without an action is selected."""
+    return KEEP_OPEN
 
 
 @plugin.on_method

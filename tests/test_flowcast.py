@@ -35,7 +35,6 @@ def test_no_devices(found):
 def test_not_a_url_shows_hint(found):
     (result,) = run_query("hello")
     assert result.title == "Paste a URL to cast"
-    assert result.json_rpc_action is None
 
 
 def test_empty_query_offers_clipboard_url(found, clipboard_text, launcher):
@@ -91,3 +90,16 @@ def test_cast_to_vanished_device(found, messages, monkeypatch):
     monkeypatch.setattr(casting, "play", lambda *args: None)
     run_cast(str(UUID(int=99)), URL)
     assert messages[0]["Parameters"][:2] == ["Couldn't cast to Chromecast", "The Chromecast is no longer on the network."]
+
+
+def test_every_result_has_an_action(found, clipboard_text):
+    found.devices = []
+    queries = ["", "hello", URL]
+    actions = [result.json_rpc_action for query in queries for result in run_query(query)]
+    assert len(actions) == 3 and all(actions)
+
+
+def test_results_without_work_keep_the_window_open(found):
+    (result,) = run_query("hello")
+    assert result.json_rpc_action["Method"] == "keep_open"
+    assert asyncio.run(flowcast.keep_open()) == KEEP_OPEN
