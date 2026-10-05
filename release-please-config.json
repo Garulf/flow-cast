@@ -13,7 +13,8 @@
           "jsonpath": "$.Version"
         }
       ],
-      "changelog-path": "CHANGELOG.md"
+      "changelog-path": "CHANGELOG.md",
+      "initial-version": "0.1.0"
     }
   }
 }
