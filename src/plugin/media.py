@@ -92,25 +92,40 @@ def first(params: dict[str, list[str]], name: str) -> str | None:
     return values[0] if values else None
 
 
-FORMAT = "best[vcodec!=none][acodec!=none][ext=mp4]/best[vcodec!=none][acodec!=none]/best"
+FORMAT = "best[vcodec!=?none][acodec!=?none][ext=mp4]/best[vcodec!=?none][acodec!=?none]/best"
 YT_DLP_LOGGER = logging.getLogger("flow-cast.yt-dlp")
 
 
-def resolve(page: Page) -> Direct:
+def resolve(page: Page) -> Direct | YouTube:
     import yt_dlp
 
     options = {
         "format": FORMAT,
         "noplaylist": True,
+        "extract_flat": "in_playlist",
+        "playlist_items": "1",
+        "lazy_playlist": True,
         "quiet": True,
         "no_warnings": True,
         "logger": YT_DLP_LOGGER,
     }
     with yt_dlp.YoutubeDL(options) as ydl:
         info = ydl.extract_info(page.url, download=False)
+    if info and info.get("_type") in ("playlist", "multi_video"):
+        return first_youtube_video(info)
     if not info or not info.get("url"):
         raise LookupError("No playable media found on this page.")
     return Direct(info["url"], content_type_of(info), live=bool(info.get("is_live")))
+
+
+def first_youtube_video(playlist: dict) -> YouTube:
+    entry = next(iter(playlist.get("entries") or []), None)
+    if entry and entry.get("_type") == "playlist":
+        return first_youtube_video(entry)
+    if not entry or entry.get("ie_key") != "Youtube" or not entry.get("id"):
+        raise LookupError("No playable media found on this page.")
+    url = urlparse(playlist.get("webpage_url") or "")
+    return YouTube(entry["id"], first(parse_qs(url.query), "list"))
 
 
 def content_type_of(info: dict) -> str:
