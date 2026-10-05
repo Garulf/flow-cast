@@ -5,6 +5,8 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-added-large-files
+        # The README hero banner renders at 3000x1000 and is ~550 KB.
+        args: [--maxkb=1000]
       - id: check-merge-conflict
       - id: check-yaml
       - id: check-json

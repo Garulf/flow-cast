@@ -1,0 +1,26 @@
+{
+  "keyword": "fc",
+  "query": "https://www.youtube.com/watch?v=FRn45upT5HA",
+  "icon": "../../data/icon.png",
+  "max_results": 3,
+  "selection": 0,
+  "results": [
+    {
+      "title": "Bedroom TV",
+      "subtitle": "Chromecast Ultra",
+      "icon": "../../data/cast.png"
+    },
+    {
+      "title": "Living Room TV",
+      "subtitle": "Chromecast · Google TV Streamer",
+      "icon": "../../data/cast.png"
+    },
+    {
+      "title": "Office Display",
+      "subtitle": "Chromecast · Google Nest Hub",
+      "icon": "../../data/cast.png"
+    }
+  ],
+  "query_suggestion": "",
+  "show_caret": false
+}

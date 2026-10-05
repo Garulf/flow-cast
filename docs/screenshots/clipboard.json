@@ -1,0 +1,16 @@
+{
+  "keyword": "fc",
+  "query": "",
+  "icon": "../../data/icon.png",
+  "max_results": 1,
+  "selection": 0,
+  "results": [
+    {
+      "title": "Cast https://www.youtube.com/watch?v=FRn45upT5HA",
+      "subtitle": "URL from clipboard",
+      "icon": "../../data/icon.png"
+    }
+  ],
+  "query_suggestion": "",
+  "show_caret": true
+}
