@@ -12,7 +12,8 @@
           "path": "data/plugin.json",
           "jsonpath": "$.Version"
         }
-      ]
+      ],
+      "changelog-path": "CHANGELOG.md"
     }
   }
 }
