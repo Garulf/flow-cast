@@ -1,0 +1,5 @@
+pyflowlauncher==1.2.1
+pychromecast==14.0.10
+# built from source as pure python by scripts/package.sh (newer releases only ship compiled wheels)
+zeroconf==0.151.5
+yt-dlp==2026.8.19

@@ -1,0 +1,12 @@
+{
+  "ID": "CC2A7E547B554303869FD30E0DCC58E6",
+  "ActionKeyword": "fc",
+  "Name": "flow-cast",
+  "Description": "Cast YouTube videos, media links and web videos to a Chromecast",
+  "Author": "Garulf",
+  "Version": "0.1.0",
+  "Language": "python_v2",
+  "Website": "https://github.com/Garulf/flow-cast",
+  "IcoPath": "icon.png",
+  "ExecuteFileName": "run.py"
+}
