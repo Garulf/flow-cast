@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from pathlib import PurePosixPath
 from urllib.parse import ParseResult, parse_qs, urlparse
@@ -89,3 +90,30 @@ def direct(url: ParseResult, text: str) -> Direct | None:
 def first(params: dict[str, list[str]], name: str) -> str | None:
     values = params.get(name)
     return values[0] if values else None
+
+
+FORMAT = "best[vcodec!=none][acodec!=none][ext=mp4]/best[vcodec!=none][acodec!=none]/best"
+YT_DLP_LOGGER = logging.getLogger("flow-cast.yt-dlp")
+
+
+def resolve(page: Page) -> Direct:
+    import yt_dlp
+
+    options = {
+        "format": FORMAT,
+        "noplaylist": True,
+        "quiet": True,
+        "no_warnings": True,
+        "logger": YT_DLP_LOGGER,
+    }
+    with yt_dlp.YoutubeDL(options) as ydl:
+        info = ydl.extract_info(page.url, download=False)
+    if not info or not info.get("url"):
+        raise LookupError("No playable media found on this page.")
+    return Direct(info["url"], content_type_of(info), live=bool(info.get("is_live")))
+
+
+def content_type_of(info: dict) -> str:
+    if str(info.get("protocol", "")).startswith("m3u8"):
+        return HLS
+    return CONTENT_TYPES.get(info.get("ext", ""), "video/mp4")
