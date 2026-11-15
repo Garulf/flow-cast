@@ -1,8 +1,11 @@
 """Render the README screenshots and hero image with flow-render.
 
-Usage (from the repo root, with flow-render installed):
+Usage (from the repo root):
 
     python docs/screenshots/render.py
+
+Uses flow-render from requirements-dev.txt when it is installed, otherwise
+runs ``uvx --from flow-render==0.15.0 flow-render``.
 """
 import json
 import shutil
@@ -16,12 +19,19 @@ SHOTS_DIR = ROOT / "docs" / "screenshots"
 ASSETS_DIR = ROOT / ".github" / "assets"
 THEMES = ("dark", "light")
 HERO = {"shot": "hero", "css": ["win11-dark.css", "docs/screenshots/hero.css"]}
-FLOW_RENDER = shutil.which("flow-render") or "/workspace/flow-render/.venv/bin/flow-render"
+FLOW_RENDER_VERSION = "0.15.0"
+
+
+def flow_render_command():
+    installed = shutil.which("flow-render")
+    if installed:
+        return [installed]
+    return ["uvx", "--from", f"flow-render=={FLOW_RENDER_VERSION}", "flow-render"]
 
 
 def flow_render(args, out_path: Path) -> None:
     with tempfile.TemporaryDirectory() as out_dir:
-        subprocess.run([FLOW_RENDER, *args, "-o", out_dir], check=True, cwd=ROOT)
+        subprocess.run([*flow_render_command(), *args, "-o", out_dir], check=True, cwd=ROOT)
         (rendered,) = Path(out_dir).glob("*.png")
         shutil.move(str(rendered), out_path)
     print(f"Wrote {out_path}")

@@ -1,4 +1,5 @@
 -r requirements.txt
-pytest==8.3.5
+pytest==9.1.1
 readwright==0.5.0
+flow-render==0.15.0
 pre-commit
