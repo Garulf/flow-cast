@@ -4,7 +4,7 @@ KEEP_OPEN = {"hide": False}
 
 
 class CastLauncher(FlowLauncherV2):
-    """FlowLauncherV2 with two gaps in pyflowlauncher 1.2.1 filled in.
+    """FlowLauncherV2 with two gaps in pyflowlauncher 1.2.2 filled in.
 
     * A python_v2 host ignores ``DontHideAfterAction`` and hides the window
       unless the action replies ``{"hide": false}``, but pyflowlauncher always
