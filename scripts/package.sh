@@ -10,9 +10,15 @@ build_dir="$(mktemp -d)"
 wheel_dir="$(mktemp -d)"
 trap 'rm -rf "$build_dir" "$wheel_dir"' EXIT
 
-cp -r "$root/src/." "$build_dir/"
+# Copy only source files git knows about (tracked or new but not ignored), so
+# local leftovers such as plugin.log and __pycache__ stay out of the archive.
+while IFS= read -r -d '' path; do
+  [ -f "$root/$path" ] || continue
+  dest="$build_dir/${path#src/}"
+  mkdir -p "$(dirname "$dest")"
+  cp "$root/$path" "$dest"
+done < <(git -C "$root" ls-files -z --cached --others --exclude-standard -- src)
 cp "$root/data/icon.png" "$root/data/cast.png" "$root/data/plugin.json" "$root/LICENSE" "$build_dir/"
-find "$build_dir" -name __pycache__ -prune -exec rm -rf {} +
 
 # zeroconf only publishes compiled wheels; build its pure-python fallback and tag it as such.
 zeroconf_req="$(grep -i '^zeroconf==' "$root/requirements.txt")"
@@ -24,7 +30,7 @@ python3 -m wheel tags --remove --python-tag py3 --abi-tag none --platform-tag an
 python3 -m pip install -r "$root/requirements.txt" \
   --target "$build_dir/plugin/site-packages" \
   --only-binary=:all: --platform any --python-version 3.11 --implementation py \
-  --find-links "$wheel_dir" --quiet --disable-pip-version-check
+  --find-links "$wheel_dir" --no-compile --quiet --disable-pip-version-check
 
 mkdir -p "$out_dir"
 zip_path="$(cd "$out_dir" && pwd)/flow-cast-${version}.zip"
